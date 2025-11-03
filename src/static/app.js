@@ -20,6 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const spotsLeft = details.max_participants - details.participants.length;
 
+        // Main activity info
         activityCard.innerHTML = `
           <h4>${name}</h4>
           <p>${details.description}</p>
@@ -27,6 +28,40 @@ document.addEventListener("DOMContentLoaded", () => {
           <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
         `;
 
+        // Participants section (built with DOM methods)
+        const participantsWrapper = document.createElement("div");
+        participantsWrapper.className = "participants";
+
+        const participantsTitle = document.createElement("div");
+        participantsTitle.className = "participants-title";
+        participantsTitle.textContent = "Participants";
+        participantsWrapper.appendChild(participantsTitle);
+
+        const participants = Array.isArray(details.participants) ? details.participants : [];
+
+        if (participants.length > 0) {
+          const ul = document.createElement("ul");
+          ul.className = "participants-list";
+
+          participants.forEach((p) => {
+            const li = document.createElement("li");
+            // use a badge-like span for nicer appearance
+            const span = document.createElement("span");
+            span.className = "participant-badge";
+            span.textContent = p;
+            li.appendChild(span);
+            ul.appendChild(li);
+          });
+
+          participantsWrapper.appendChild(ul);
+        } else {
+          const noParticipants = document.createElement("p");
+          noParticipants.className = "no-participants";
+          noParticipants.textContent = "No participants yet";
+          participantsWrapper.appendChild(noParticipants);
+        }
+
+        activityCard.appendChild(participantsWrapper);
         activitiesList.appendChild(activityCard);
 
         // Add option to select dropdown
