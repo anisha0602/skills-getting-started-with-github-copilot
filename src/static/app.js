@@ -20,6 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const spotsLeft = details.max_participants - details.participants.length;
 
+        // Main activity info
         activityCard.innerHTML = `
           <h4>${name}</h4>
           <p>${details.description}</p>
@@ -27,6 +28,55 @@ document.addEventListener("DOMContentLoaded", () => {
           <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
         `;
 
+        // Participants section (built with DOM methods)
+        const participantsWrapper = document.createElement("div");
+        participantsWrapper.className = "participants";
+
+        const participantsTitle = document.createElement("div");
+        participantsTitle.className = "participants-title";
+        participantsTitle.textContent = "Participants";
+        participantsWrapper.appendChild(participantsTitle);
+
+        const participants = Array.isArray(details.participants) ? details.participants : [];
+
+        if (participants.length > 0) {
+          const ul = document.createElement("ul");
+          ul.className = "participants-list";
+
+          participants.forEach((p) => {
+            const li = document.createElement("li");
+
+            // Display participant email as a pill
+            const span = document.createElement("span");
+            span.className = "participant-badge";
+            span.textContent = p;
+
+            // Add delete button
+            const deleteButton = document.createElement("button");
+            deleteButton.className = "delete-participant";
+            deleteButton.textContent = "❌";
+            deleteButton.addEventListener("click", () => {
+              const confirmation = confirm(`Are you sure you want to delete ${p}?`);
+              if (confirmation) {
+                console.log(`Unregistering participant: ${p} from activity: ${name}`);
+                li.remove();
+              }
+            });
+
+            li.appendChild(span);
+            li.appendChild(deleteButton);
+            ul.appendChild(li);
+          });
+
+          participantsWrapper.appendChild(ul);
+        } else {
+          const noParticipants = document.createElement("p");
+          noParticipants.className = "no-participants";
+          noParticipants.textContent = "No participants yet";
+          participantsWrapper.appendChild(noParticipants);
+        }
+
+        activityCard.appendChild(participantsWrapper);
         activitiesList.appendChild(activityCard);
 
         // Add option to select dropdown
@@ -62,6 +112,9 @@ document.addEventListener("DOMContentLoaded", () => {
         messageDiv.textContent = result.message;
         messageDiv.className = "success";
         signupForm.reset();
+
+        // Refresh the activities list dynamically
+        fetchActivities();
       } else {
         messageDiv.textContent = result.detail || "An error occurred";
         messageDiv.className = "error";
