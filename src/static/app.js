@@ -45,11 +45,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
           participants.forEach((p) => {
             const li = document.createElement("li");
-            // use a badge-like span for nicer appearance
+
+            // Display participant email as a pill
             const span = document.createElement("span");
             span.className = "participant-badge";
             span.textContent = p;
+
+            // Add delete button
+            const deleteButton = document.createElement("button");
+            deleteButton.className = "delete-participant";
+            deleteButton.textContent = "❌";
+            deleteButton.addEventListener("click", () => {
+              const confirmation = confirm(`Are you sure you want to delete ${p}?`);
+              if (confirmation) {
+                console.log(`Unregistering participant: ${p} from activity: ${name}`);
+                li.remove();
+              }
+            });
+
             li.appendChild(span);
+            li.appendChild(deleteButton);
             ul.appendChild(li);
           });
 
